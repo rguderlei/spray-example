@@ -2,6 +2,7 @@ package de.guderlei.spray
 
 import akka.actor.{Props, ActorSystem}
 import api.MyServiceActor
+import core.TodoItemActor
 import domain.{TodoItem, Todos}
 import spray.can.server.HttpServer
 import spray.io._
@@ -9,6 +10,9 @@ import org.squeryl.{Session, SessionFactory}
 import org.squeryl.adapters.H2Adapter
 import org.squeryl.PrimitiveTypeMode._
 import java.util.Date
+import concurrent.duration.Duration
+import akka.util.Timeout
+import java.util.concurrent.TimeUnit._
 
 
 object Boot extends App {
@@ -35,7 +39,9 @@ object Boot extends App {
 
   // create and start our service actor
   val service = system.actorOf(Props[MyServiceActor], "demo-service")
-
+  system.actorOf(Props[TodoItemActor], "todo-service")
+  // create
+  implicit val timeout: Timeout = Duration(1, SECONDS)
   // create and start the spray-can HttpServer, telling it that
   // we want requests to be handled by our singleton service actor
   val httpServer = system.actorOf(

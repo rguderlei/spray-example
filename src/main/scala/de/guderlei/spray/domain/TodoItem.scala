@@ -1,6 +1,8 @@
 package de.guderlei.spray.domain
 
 import java.util.Date
+import org.squeryl.PrimitiveTypeMode._
+
 
 /**
  * simple model for Todos
