@@ -1,34 +1,28 @@
 package de.guderlei.spray.core
 
 import akka.actor.Actor
-import de.guderlei.spray.domain.Todos
+import de.guderlei.spray.database.{Todos,DbConnection}
 import org.squeryl.PrimitiveTypeMode._
+import akka.event.Logging
+import de.guderlei.spray.domain.TodoItem
 
-/**
- * Created with IntelliJ IDEA.
- * User: rguderlei
- * Date: 24.11.12
- * Time: 13:53
- * To change this template use File | Settings | File Templates.
- */
 
 case class Get(id:Long)
 case object All
 
-trait TodoItemOperations {
-    def getItemById(id:Long) = Todos.todos.where(i => i.id === id).single
-    def allItems() = Todos.todos
+trait TodoItemOperations extends DbConnection {
+  def getById(id: Long) = transaction {
+     Todos.todos.where(i =>  i.id === id ).toList.headOption
+   }
+   def all = transaction {
+     from( Todos.todos ) (s => select(s)).toList
+   }
 }
 
-class TodoItemActor extends Actor with TodoItemOperations {
-  protected def receive = {
-    case Get(id) =>
-      sender ! getItemById(id)
+class TodoItemActor extends Actor with TodoItemOperations{
 
-    case All =>
-      sender ! allItems()
-
+  def receive = {
+      case Get(id) => sender ! getById(id)
+      case All => sender ! all
   }
-
-
 }

@@ -1,6 +1,7 @@
-package de.guderlei.spray.domain
+package de.guderlei.spray.database
 
 import org.squeryl.Schema
+import de.guderlei.spray.domain.TodoItem
 
 
 /**
