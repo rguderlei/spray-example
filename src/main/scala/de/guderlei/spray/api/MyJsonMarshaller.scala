@@ -5,6 +5,7 @@ import de.guderlei.spray.domain.TodoItem
 import java.util.{GregorianCalendar, Date}
 import javax.xml.bind.DatatypeConverter
 import spray.httpx.SprayJsonSupport
+import scala.concurrent.ExecutionContext
 
 /**
  * Customized JSON Protocol
