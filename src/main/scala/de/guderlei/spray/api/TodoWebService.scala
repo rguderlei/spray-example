@@ -2,18 +2,26 @@ package de.guderlei.spray.api
 
 import akka.actor.Actor
 import spray.routing._
-import de.guderlei.spray.core.{Get, All}
+import de.guderlei.spray.core.{Delete, Get, All, Update,Create}
 import de.guderlei.spray.domain.TodoItem
+import java.util.Date
 import reflect.ClassTag
+import spray.http.HttpResponse
+import spray.can.parsing.Result.Ok
+
+// magic import
+
 import scala.concurrent.{ExecutionContext, Future}
 import spray.httpx.marshalling.Marshaller
 import scala.concurrent.ExecutionContext.Implicits.global
 
+// magic import
 
 
 class TodoWebServiceActor extends Actor with TodoWebService {
 
   def actorRefFactory = context
+
   // this actor only runs our route, but you could add
   // other things here, like request stream processing
   // or timeout handling
@@ -27,24 +35,33 @@ class TodoWebServiceActor extends Actor with TodoWebService {
 trait TodoWebService extends HttpService with AsyncSupport with MyJsonMarshaller {
 
   val myRoute =
-    path("items" / LongNumber) { id: Long =>
-      get {
 
-  /*      implicitly[Marshaller[TodoItem]]
-        implicitly[Marshaller[Option[TodoItem]]]
-        implicitly[Marshaller[Future[TodoItem]]]
-        implicitly[Marshaller[Future[Option[TodoItem]]]]*/
+    path("items" / LongNumber) {
+      id: Long =>
+        get {
           complete {
             (actorRefFactory.actorFor("/user/todo-service") ? Get(id)).mapTo[Option[TodoItem]]
           }
-      }
-    } ~
-    path("items") {
-      get {
-          complete {
-            (actorRefFactory.actorFor("/user/todo-service") ? All).mapTo[List[TodoItem]]
+        } ~ delete {
+          (actorRefFactory.actorFor("/user/todo-service") ? Delete(id))
+          complete { "item deleted" }
+        } }~
+          path("items") {
+            get {
+              complete {
+                (actorRefFactory.actorFor("/user/todo-service") ? All).mapTo[List[TodoItem]]
+              }
+            } ~ post {
+              entity(as[TodoItem]){ item =>
+                complete {
+                  (actorRefFactory.actorFor("/user/todo-service") ? Create(item.dueDate, item.text)).mapTo[TodoItem]
+                }
+              }
+
+            }
           }
-      }
-    }
+
 }
+
+
 

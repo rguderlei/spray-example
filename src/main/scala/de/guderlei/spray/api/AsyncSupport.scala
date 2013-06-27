@@ -13,5 +13,5 @@ import concurrent.duration.Duration
  * To change this template use File | Settings | File Templates.
  */
 trait AsyncSupport extends AskSupport{
-  implicit val timeout: Timeout = Duration(1, SECONDS)
+  implicit val timeout: Timeout = Duration(5, SECONDS)
 }

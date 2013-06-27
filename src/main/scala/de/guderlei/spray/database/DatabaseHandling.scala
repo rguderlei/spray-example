@@ -2,6 +2,11 @@ package de.guderlei.spray.database
 
 import org.squeryl.{Session, SessionFactory}
 import org.squeryl.adapters.H2Adapter
+import de.guderlei.spray.domain.TodoItem
+import java.util.Date
+import org.squeryl.PrimitiveTypeMode._
+import de.guderlei.spray.domain.TodoItem
+import scala.Some
 
 /**
  * sample squeryl configuration
@@ -9,16 +14,19 @@ import org.squeryl.adapters.H2Adapter
 trait DbConnection {
   SessionFactory.newSession.bindToCurrentThread
 
-  /*
+
   def initialize() {
     transaction {
-      Todos.create
-      Todos.todos.insert(new TodoItem(0, new Date(), text = "urgent"))
-      Todos.todos.insert(new TodoItem(1, new Date(), text = "foo"))
-      Todos.todos.insert(new TodoItem(2, new Date(), text = "blubb"))
-      Console.println("Data inserted")
+      try {
+        from( Todos.todos ) (s => select(s)).toList
+      } catch {
+        case e: Exception => {
+          Todos.create
+          Todos.todos.insert(new TodoItem(0, new Date(), text = "urgent"))
+        }
+      }
     }
-  } */
+  }
 
 }
 
