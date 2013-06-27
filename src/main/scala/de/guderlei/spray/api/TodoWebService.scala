@@ -2,7 +2,7 @@ package de.guderlei.spray.api
 
 import akka.actor.Actor
 import spray.routing._
-import de.guderlei.spray.core.{Delete, Get, All, Update,Create}
+import de.guderlei.spray.core.{Delete, Get, All, Update, Create}
 import de.guderlei.spray.domain.TodoItem
 import java.util.Date
 import reflect.ClassTag
@@ -42,24 +42,36 @@ trait TodoWebService extends HttpService with AsyncSupport with MyJsonMarshaller
           complete {
             (actorRefFactory.actorFor("/user/todo-service") ? Get(id)).mapTo[Option[TodoItem]]
           }
+        } ~ put {
+          entity(as[TodoItem]) {
+            item =>
+              complete {
+                (actorRefFactory.actorFor("/user/todo-service") ? Update(new TodoItem(id, item.dueDate, item.text))).mapTo[TodoItem]
+              }
+          }
+
         } ~ delete {
           (actorRefFactory.actorFor("/user/todo-service") ? Delete(id))
-          complete { "item deleted" }
-        } }~
-          path("items") {
-            get {
-              complete {
-                (actorRefFactory.actorFor("/user/todo-service") ? All).mapTo[List[TodoItem]]
-              }
-            } ~ post {
-              entity(as[TodoItem]){ item =>
-                complete {
-                  (actorRefFactory.actorFor("/user/todo-service") ? Create(item.dueDate, item.text)).mapTo[TodoItem]
-                }
-              }
-
-            }
+          complete {
+            "item deleted"
           }
+        }
+    } ~
+      path("items") {
+        get {
+          complete {
+            (actorRefFactory.actorFor("/user/todo-service") ? All).mapTo[List[TodoItem]]
+          }
+        } ~ post {
+          entity(as[TodoItem]) {
+            item =>
+              complete {
+                (actorRefFactory.actorFor("/user/todo-service") ? Create(item.dueDate, item.text)).mapTo[TodoItem]
+              }
+          }
+
+        }
+      }
 
 }
 
