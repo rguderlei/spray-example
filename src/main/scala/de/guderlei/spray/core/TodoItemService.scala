@@ -6,6 +6,8 @@ import org.squeryl.PrimitiveTypeMode._
 import akka.event.Logging
 import de.guderlei.spray.domain.TodoItem
 import java.util.Date
+import akka.event.Logging
+
 
 
 case class Get(id:Long)
@@ -15,10 +17,11 @@ case class Create(dueDate: Date, text: String)
 case object All
 
 trait TodoItemOperations extends DbConnection {
+
   initialize()
 
   def getById(id: Long) = transaction {
-     Todos.todos.where(i =>  i.id === id ).toList.headOption
+     from(Todos.todos) (i => where(i.id === id ) select(i)).toList.headOption
   }
   def all = transaction {
      from( Todos.todos ) (s => select(s)).toList
@@ -37,11 +40,23 @@ trait TodoItemOperations extends DbConnection {
 }
 
 class TodoItemActor extends Actor with TodoItemOperations{
-
+  val log = Logging(context.system, this)
   def receive = {
-      case Get(id) => sender ! getById(id)
+      case Get(id) => {
+        log.info(id.toString())
+        val item = getById(id)
+        item match {
+          case None => log.info("nothing found")
+          case Some(x) => log.info(x.text)
+        }
+
+        sender ! item
+      }
       case Update(item) => sender ! update(item)
-      case Delete(id) => sender ! delete(id)
+      case Delete(id) =>{
+        log.info("delete called")
+        sender ! delete(id)
+      }
       case Create(dueDate, text) => sender ! create(dueDate, text)
       case All => sender ! all
   }

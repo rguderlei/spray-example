@@ -20,8 +20,8 @@ libraryDependencies ++= Seq(
   "io.spray"            %%  "spray-json"        % "1.2.5",
   "com.typesafe.akka"   %%  "akka-actor"        % "2.1.4",
   "org.specs2"          %%  "specs2"            % "2.0"      % "test",
-  "org.squeryl"         % "squeryl_2.10.0-RC2"  % "0.9.5-4",
-  "com.h2database"      % "h2"                  % "1.3.168"
+  "org.squeryl"         %%  "squeryl"           % "0.9.5-6",
+  "com.h2database"      %   "h2"                % "1.3.168"
 )
 
 seq(Revolver.settings: _*)

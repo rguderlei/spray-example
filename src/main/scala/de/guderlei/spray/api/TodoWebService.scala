@@ -51,8 +51,8 @@ trait TodoWebService extends HttpService with AsyncSupport with MyJsonMarshaller
           }
 
         } ~ delete {
-          (actorRefFactory.actorFor("/user/todo-service") ? Delete(id))
           complete {
+            (actorRefFactory.actorFor("/user/todo-service") ? Delete(id))
             "item deleted"
           }
         }
