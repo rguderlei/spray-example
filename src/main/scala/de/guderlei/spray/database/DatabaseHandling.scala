@@ -31,6 +31,7 @@ trait DbConnection {
 
 trait DatabaseConfiguration {
   Class.forName("org.h2.Driver")
-  SessionFactory.concreteFactory = Some(()=> Session.create(java.sql.DriverManager.getConnection("jdbc:h2:mem:test;TRACE_LEVEL_FILE=4"), new H2Adapter) )
+  // see http://stackoverflow.com/questions/4162557/timeout-error-trying-to-lock-table-in-h2
+  SessionFactory.concreteFactory = Some(()=> Session.create(java.sql.DriverManager.getConnection("jdbc:h2:mem:test;TRACE_LEVEL_FILE=4;MVCC=true"), new H2Adapter) )
 }
 

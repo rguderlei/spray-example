@@ -46,13 +46,13 @@ trait TodoWebService extends HttpService with AsyncSupport with MyJsonMarshaller
           entity(as[TodoItem]) {
             item =>
               complete {
-                (actorRefFactory.actorFor("/user/todo-service") ? Update(new TodoItem(id, item.dueDate, item.text))).mapTo[TodoItem]
+                (actorRefFactory.actorFor("/user/todo-service") ? Update(new TodoItem(id, item.dueDate, item.text))).mapTo[Option[TodoItem]]
               }
           }
 
         } ~ delete {
-          (actorRefFactory.actorFor("/user/todo-service") ? Delete(id))
           complete {
+            (actorRefFactory.actorFor("/user/todo-service") ? Delete(id))
             "item deleted"
           }
         }
