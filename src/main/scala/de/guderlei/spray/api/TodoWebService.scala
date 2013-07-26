@@ -44,8 +44,10 @@ trait TodoWebService extends HttpService with AsyncSupport with MyJsonMarshaller
     path("items" / LongNumber) {
       id: Long =>
         get {
-          complete {
-            (actorRefFactory.actorFor("/user/todo-service") ? Get(id)).mapTo[Option[TodoItem]]
+          rejectEmptyResponse {
+            complete {
+              (actorRefFactory.actorFor("/user/todo-service") ? Get(id)).mapTo[Option[TodoItem]]
+            }
           }
         } ~ put {
           entity(as[TodoItem]) {
@@ -61,22 +63,23 @@ trait TodoWebService extends HttpService with AsyncSupport with MyJsonMarshaller
             "item deleted"
           }
         }
-    } ~
-      path("items") {
-        get {
-          complete {
-            (actorRefFactory.actorFor("/user/todo-service") ? All).mapTo[List[TodoItem]]
-          }
-        } ~ post {
-          entity(as[TodoItem]) {
-            item =>
+    } ~  path("items") {
+          get {
+
               complete {
-                (actorRefFactory.actorFor("/user/todo-service") ? Create(item.dueDate, item.text)).mapTo[TodoItem]
+                (actorRefFactory.actorFor("/user/todo-service") ? All).mapTo[List[TodoItem]]
               }
           }
+      } ~ post {
+            entity(as[TodoItem]) {
+              item =>
+                complete {
+                  (actorRefFactory.actorFor("/user/todo-service") ? Create(item.dueDate, item.text)).mapTo[TodoItem]
+                }
+            }
+          }
 
-        }
-      }
+
 
 }
 

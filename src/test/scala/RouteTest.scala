@@ -8,7 +8,8 @@ import de.guderlei.spray.api._
 import spray.http.StatusCodes._
 import java.util.Date
 
-class RouteTest  extends Specification with Specs2RouteTest  with TodoWebService with DatabaseConfiguration{
+
+class MyRouteTest  extends Specification with Specs2RouteTest  with TodoWebService with DatabaseConfiguration{
     def actorRefFactory = system // connect the DSL to the test ActorSystem
    // start the backend actor, the database is started using the DatabaseConfiguration mixin
     actorRefFactory.actorOf(Props[TodoItemActor], "todo-service")
@@ -33,12 +34,38 @@ class RouteTest  extends Specification with Specs2RouteTest  with TodoWebService
       }
 
      "the previously created item by its direct url" in {
-        Get("/items/" + id.toString) ~> myRoute ~> check {
+        Get("/items/" + id) ~> myRoute ~> check {
           status === OK
-          val item = entityAs[Option[TodoItem]]
-          item.get.text === "test"
+          entityAs[Option[TodoItem]] match {
+            case Some(item) => item.text === "test"
+            case None => failure("None not expected")
+          }
+
         }
       }
+
+     "modify the created item" in {
+       Put("/items/" + id, new TodoItem(id, new Date(), "other text")) ~> myRoute ~> check {
+         status === OK
+         entityAs[Option[TodoItem]] match {
+           case Some(item) =>  item.text === "other text"
+           case None => failure("None not expected")
+         }
+
+       }
+     }
+
+     "delete the item" in {
+       Delete("/items/" + id) ~> myRoute ~> check {
+         status === OK
+       }
+     }
+
+     "not find the deleted item" in {
+       Get("/items/" + id) ~> myRoute ~> check {
+         handled === false
+       }
+     }
     }
 
 }
