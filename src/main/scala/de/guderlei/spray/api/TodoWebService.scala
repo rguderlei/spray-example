@@ -18,6 +18,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 // magic import
 
 
+/**
+ * Actor to provide the routes of the rest services
+ */
 class TodoWebServiceActor extends Actor with TodoWebService {
 
   def actorRefFactory = context
@@ -28,10 +31,12 @@ class TodoWebServiceActor extends Actor with TodoWebService {
   def receive = runRoute(myRoute)
 }
 
-// we don't implement our route structure directly in the service actor because
-// we want to be able to test it independently, without having to spin up an actor
-// the HttpService trait defines only one abstract member, which
-// connects the services environment to the enclosing actor or test
+/**
+ * trait to define the routes of the application
+ *
+ * we don't implement our route structure directly in the service actor because
+we want to be able to test it independently, without having to spin up an actor
+the HttpService trait defines only one abstract member, which connects the services environment to the enclosing actor or test */
 trait TodoWebService extends HttpService with AsyncSupport with MyJsonMarshaller {
 
   val myRoute =

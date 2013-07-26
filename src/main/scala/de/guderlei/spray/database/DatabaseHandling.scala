@@ -9,12 +9,15 @@ import de.guderlei.spray.domain.TodoItem
 import scala.Some
 
 /**
- * sample squeryl configuration
+ * sample squeryl session configuration
  */
 trait DbConnection {
   SessionFactory.newSession.bindToCurrentThread
 
-
+  /**
+   * initialize the database schema. The schema is created iff it does not
+   * exist in the database.
+   */
   def initialize() {
     transaction {
       try {
@@ -29,6 +32,9 @@ trait DbConnection {
 
 }
 
+/**
+ * sample squeryl configuration with an in-memory H2 database
+ */
 trait DatabaseConfiguration {
   Class.forName("org.h2.Driver")
   // see http://stackoverflow.com/questions/4162557/timeout-error-trying-to-lock-table-in-h2

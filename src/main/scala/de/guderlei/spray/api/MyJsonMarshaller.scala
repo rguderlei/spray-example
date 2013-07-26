@@ -8,7 +8,7 @@ import spray.httpx.SprayJsonSupport
 import scala.concurrent.ExecutionContext
 
 /**
- * Customized JSON Protocol
+ * Customized JSON Protocol to handle Dates and TodoItems
  */
 trait MyJsonMarshaller extends DefaultJsonProtocol with SprayJsonSupport{
 

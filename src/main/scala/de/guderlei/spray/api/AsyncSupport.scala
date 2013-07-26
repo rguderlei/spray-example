@@ -6,11 +6,7 @@ import java.util.concurrent.TimeUnit._
 import concurrent.duration.Duration
 
 /**
- * Created with IntelliJ IDEA.
- * User: rguderlei
- * Date: 07.12.12
- * Time: 16:39
- * To change this template use File | Settings | File Templates.
+ * simple configuration of akkas asyncronous AskSupport
  */
 trait AsyncSupport extends AskSupport{
   implicit val timeout: Timeout = Duration(5, SECONDS)
