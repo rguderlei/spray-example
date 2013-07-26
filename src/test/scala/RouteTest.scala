@@ -36,7 +36,7 @@ class MyRouteTest  extends Specification with Specs2RouteTest  with TodoWebServi
      "the previously created item by its direct url" in {
         Get("/items/" + id) ~> myRoute ~> check {
           status === OK
-          entityAs[Option[TodoItem]] match {
+          entityAs[TodoItem] match {
             case Some(item) => item.text === "test"
             case None => failure("None not expected")
           }
