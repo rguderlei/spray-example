@@ -86,9 +86,11 @@ trait TodoItemOperations extends DbConnection {
    * @param item the item to modify
    * @return the modified item
    */
-  def update (item: TodoItem) = transaction {
-     Todos.todos.update(i => where(i.id===item.id) set(i.dueDate := item.dueDate, i.text := item.text ))
-     getById(item.id)
+  def update (item: TodoItem) = {
+    transaction {
+      Todos.todos.update(i => where(i.id===item.id) set(i.dueDate := item.dueDate, i.text := item.text ))
+    }
+    getById(item.id)
   }
 }
 

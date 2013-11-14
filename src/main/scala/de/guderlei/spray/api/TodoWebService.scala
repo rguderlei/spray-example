@@ -7,7 +7,6 @@ import de.guderlei.spray.domain.TodoItem
 import java.util.Date
 import reflect.ClassTag
 import spray.http.HttpResponse
-import spray.can.parsing.Result.Ok
 
 // magic import
 
@@ -46,20 +45,20 @@ trait TodoWebService extends HttpService with AsyncSupport with MyJsonMarshaller
         get {
           rejectEmptyResponse {
             complete {
-              (actorRefFactory.actorFor("/user/todo-service") ? Get(id)).mapTo[Option[TodoItem]]
+              (actorRefFactory.actorSelection("/user/todo-service") ? Get(id)).mapTo[Option[TodoItem]]
             }
           }
         } ~ put {
           entity(as[TodoItem]) {
             item =>
               complete {
-                (actorRefFactory.actorFor("/user/todo-service") ? Update(new TodoItem(id, item.dueDate, item.text))).mapTo[Option[TodoItem]]
+                (actorRefFactory.actorSelection("/user/todo-service") ? Update(new TodoItem(id, item.dueDate, item.text))).mapTo[Option[TodoItem]]
               }
           }
 
         } ~ delete {
           complete {
-            (actorRefFactory.actorFor("/user/todo-service") ? Delete(id))
+            (actorRefFactory.actorSelection("/user/todo-service") ? Delete(id))
             "item deleted"
           }
         }
@@ -67,14 +66,14 @@ trait TodoWebService extends HttpService with AsyncSupport with MyJsonMarshaller
           get {
 
               complete {
-                (actorRefFactory.actorFor("/user/todo-service") ? All).mapTo[List[TodoItem]]
+                (actorRefFactory.actorSelection("/user/todo-service") ? All).mapTo[List[TodoItem]]
               }
           }
       } ~ post {
             entity(as[TodoItem]) {
               item =>
                 complete {
-                  (actorRefFactory.actorFor("/user/todo-service") ? Create(item.dueDate, item.text)).mapTo[TodoItem]
+                  (actorRefFactory.actorSelection("/user/todo-service") ? Create(item.dueDate, item.text)).mapTo[TodoItem]
                 }
             }
           }

@@ -1,10 +1,11 @@
 # Simple Example with Spray, Akka, and Squeryl
 
 The basic setup is from the valuable [spray template](http://github.com/spray/spray-template).
-The final form of the example will cover
+The example covers
 - REST-Services with [Spray](http://spray.io)
 - an event-driven architecture based on [Akka](http://akka.io)
 - persistence with [squeryl](http://squeryl.org)
+- Testing with [Specs2](http://etorreborre.github.io/specs2/)
 
 ## Structure
 The project layout is corresponding to the classic maven style directory structure. All source code is located
@@ -22,3 +23,10 @@ The source code is organized in the following packages:
 3. Message object is passed to the business logic actor
 4. the database interaction is triggered the message object
 5. the resulting data is passed back to the webservice actor
+
+## Building
+The project is built using sbt. Use 
+```
+sbt gen-idea
+```
+to create Idea project files.
