@@ -1,12 +1,18 @@
 package de.guderlei.spray.api
 
-import akka.actor.Actor
+import akka.actor.{Props, Actor}
 import spray.routing._
-import de.guderlei.spray.core.{Delete, Get, All, Update, Create}
+import de.guderlei.spray.core._
 import de.guderlei.spray.domain.TodoItem
 import java.util.Date
 import reflect.ClassTag
 import spray.http.HttpResponse
+import akka.routing.{RoundRobinRouter, FromConfig}
+import de.guderlei.spray.core.Update
+import de.guderlei.spray.domain.TodoItem
+import de.guderlei.spray.core.Get
+import de.guderlei.spray.core.Create
+import de.guderlei.spray.core.Delete
 
 // magic import
 
@@ -37,6 +43,7 @@ class TodoWebServiceActor extends Actor with TodoWebService {
 we want to be able to test it independently, without having to spin up an actor
 the HttpService trait defines only one abstract member, which connects the services environment to the enclosing actor or test */
 trait TodoWebService extends HttpService with AsyncSupport with MyJsonMarshaller {
+  def backend = actorRefFactory.actorOf(Props[TodoItemActor].withRouter(RoundRobinRouter(nrOfInstances = 10)))
 
   val myRoute =
 
@@ -45,20 +52,20 @@ trait TodoWebService extends HttpService with AsyncSupport with MyJsonMarshaller
         get {
           rejectEmptyResponse {
             complete {
-              (actorRefFactory.actorSelection("/user/todo-service") ? Get(id)).mapTo[Option[TodoItem]]
+              (backend ? Get(id)).mapTo[Option[TodoItem]]
             }
           }
         } ~ put {
           entity(as[TodoItem]) {
             item =>
               complete {
-                (actorRefFactory.actorSelection("/user/todo-service") ? Update(new TodoItem(id, item.dueDate, item.text))).mapTo[Option[TodoItem]]
+                (backend ? Update(new TodoItem(id, item.dueDate, item.text))).mapTo[Option[TodoItem]]
               }
           }
 
         } ~ delete {
           complete {
-            (actorRefFactory.actorSelection("/user/todo-service") ? Delete(id))
+            (backend ? Delete(id))
             "item deleted"
           }
         }
@@ -66,14 +73,14 @@ trait TodoWebService extends HttpService with AsyncSupport with MyJsonMarshaller
           get {
 
               complete {
-                (actorRefFactory.actorSelection("/user/todo-service") ? All).mapTo[List[TodoItem]]
+                (backend ? All).mapTo[List[TodoItem]]
               }
           }
       } ~ post {
             entity(as[TodoItem]) {
               item =>
                 complete {
-                  (actorRefFactory.actorSelection("/user/todo-service") ? Create(item.dueDate, item.text)).mapTo[TodoItem]
+                  (backend ? Create(item.dueDate, item.text)).mapTo[TodoItem]
                 }
             }
           }

@@ -24,7 +24,13 @@ trait DbConnection {
         from( Todos.todos ) (s => select(s)).toList
       } catch {
         case e: Exception => {
-          Todos.create
+          try {
+            Todos.create
+          } catch {
+            case e:Exception => {
+
+            }
+          }
         }
       }
     }
