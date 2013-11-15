@@ -33,31 +33,39 @@ trait DatabaseConfiguration {
 
   val log = LoggerFactory.getLogger("Database")
 
+
   SessionFactory.concreteFactory = Some(
     ()=> Session.create(connectionPool.getConnection(), new H2Adapter)
   )
 
+  initializeSchema()
   /**
    * initialize the database schema. The schema is created iff it does not
    * exist in the database.
    */
   def initializeSchema() {
-    //log.info("initialize database")
-    transaction {
+    log.info("initialize database")
+
       try {
-        from( Todos.todos ) (s => select(s)).toList
+        transaction {
+          from( Todos.todos ) (s => select(s)).toList
+        }
       } catch {
         case e: Exception => {
           try {
-            // log.info("create schema")
-            Todos.create
+            transaction{
+              log.info("create schema")
+              Todos.create
+            }
+            transaction{
+              from( Todos.todos ) (s => select(s)).toList
+            }
           } catch {
             case e:Exception => {
-              // log.error(e.getMessage, e)
+              log.error(e.getMessage, e)
             }
           }
         }
-      }
     }
   }
 

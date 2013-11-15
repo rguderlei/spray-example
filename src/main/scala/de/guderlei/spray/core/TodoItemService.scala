@@ -55,7 +55,7 @@ trait TodoItemOperations extends DbConnection {
    * load all TodoItems from the database
    * @return
    */
-  def all = transaction {
+  def all() = transaction {
     try{
       println("fetch all")
      from( Todos.todos ) (s => select(s)).toList
@@ -125,7 +125,8 @@ class TodoItemActor extends Actor with TodoItemOperations{
       case Create(dueDate, text) => sender ! create(dueDate, text)
       case All => {
         log.info("fetch all items")
-        sender ! all
+        val result = all()
+        sender ! result
       }
   }
 }
