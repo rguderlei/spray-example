@@ -15,6 +15,8 @@ object Boot extends App with DatabaseConfiguration {
   // create and start our service actor
   val service = system.actorOf(Props[TodoWebServiceActor], "demo-service")
 
-   // start a new HTTP server on port 8080 with our service actor as the handler
+  initializeSchema()
+
+  // start a new HTTP server on port 8080 with our service actor as the handler
   IO(Http) ! Http.Bind(service, interface = "localhost", port = 8080)
 }

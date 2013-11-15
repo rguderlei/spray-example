@@ -5,36 +5,16 @@ import org.squeryl.adapters.H2Adapter
 import de.guderlei.spray.domain.TodoItem
 import java.util.Date
 import org.squeryl.PrimitiveTypeMode._
-import de.guderlei.spray.domain.TodoItem
 import scala.Some
+import com.jolbox.bonecp.{BoneCP, BoneCPConfig}
+import org.slf4j.LoggerFactory
 
 /**
  * sample squeryl session configuration
  */
 trait DbConnection {
   SessionFactory.newSession.bindToCurrentThread
-
-  /**
-   * initialize the database schema. The schema is created iff it does not
-   * exist in the database.
-   */
-  def initialize() {
-    transaction {
-      try {
-        from( Todos.todos ) (s => select(s)).toList
-      } catch {
-        case e: Exception => {
-          try {
-            Todos.create
-          } catch {
-            case e:Exception => {
-
-            }
-          }
-        }
-      }
-    }
-  }
+  //org.squeryl.Session.currentSession.setLogger( x => println(x))
 
 }
 
@@ -43,7 +23,43 @@ trait DbConnection {
  */
 trait DatabaseConfiguration {
   Class.forName("org.h2.Driver")
+
+  val poolConfig = new BoneCPConfig()
   // see http://stackoverflow.com/questions/4162557/timeout-error-trying-to-lock-table-in-h2
-  SessionFactory.concreteFactory = Some(()=> Session.create(java.sql.DriverManager.getConnection("jdbc:h2:mem:test;TRACE_LEVEL_FILE=4;MVCC=true"), new H2Adapter) )
+  poolConfig.setJdbcUrl("jdbc:h2:mem:test")
+  poolConfig.setUsername("sa")
+  poolConfig.setPassword("")
+  val connectionPool = new BoneCP(poolConfig)
+
+  val log = LoggerFactory.getLogger("Database")
+
+  SessionFactory.concreteFactory = Some(
+    ()=> Session.create(connectionPool.getConnection(), new H2Adapter)
+  )
+
+  /**
+   * initialize the database schema. The schema is created iff it does not
+   * exist in the database.
+   */
+  def initializeSchema() {
+    //log.info("initialize database")
+    transaction {
+      try {
+        from( Todos.todos ) (s => select(s)).toList
+      } catch {
+        case e: Exception => {
+          try {
+            // log.info("create schema")
+            Todos.create
+          } catch {
+            case e:Exception => {
+              // log.error(e.getMessage, e)
+            }
+          }
+        }
+      }
+    }
+  }
+
 }
 
