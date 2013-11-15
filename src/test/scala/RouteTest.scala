@@ -3,6 +3,7 @@ import de.guderlei.spray.core.TodoItemActor
 import de.guderlei.spray.database.DatabaseConfiguration
 import de.guderlei.spray.domain.TodoItem
 import org.specs2.mutable.Specification
+import org.specs2.specification.Example
 import spray.testkit.Specs2RouteTest
 import de.guderlei.spray.api._
 import spray.http.StatusCodes._
@@ -38,13 +39,14 @@ class MyRouteTest extends Specification with Specs2RouteTest with TodoWebService
         val item = responseAs[TodoItem]
         id = item.id
         status === OK
-        Get("/items/" + id) ~> myRoute ~> check {
+        val sub: Example =Get("/items/" + id) ~> myRoute ~> check {
           status === OK
           responseAs[Option[TodoItem]] match {
             case Some(item) => item.text === "test"
             case None => failure("None not expected")
           }
         }
+        sub
       }
     }
 
@@ -53,13 +55,14 @@ class MyRouteTest extends Specification with Specs2RouteTest with TodoWebService
         val item = responseAs[TodoItem]
         id = item.id
         status === OK
-        Put("/items/" + id, new TodoItem(id, new Date(), "other text")) ~> myRoute ~> check {
+        val sub: Example = Put("/items/" + id, new TodoItem(id, new Date(), "other text")) ~> myRoute ~> check {
           status === OK
           responseAs[Option[TodoItem]] match {
             case Some(item) => item.text === "other text"
             case None => failure("None not expected")
           }
         }
+        sub
       }
     }
 
@@ -68,9 +71,10 @@ class MyRouteTest extends Specification with Specs2RouteTest with TodoWebService
         val item = responseAs[TodoItem]
         id = item.id
         status === OK
-        Delete("/items/" + id) ~> myRoute ~> check {
+        val sub: Example = Delete("/items/" + id) ~> myRoute ~> check {
           status === OK
         }
+        sub
       }
     }
 
