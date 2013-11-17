@@ -10,15 +10,6 @@ import com.jolbox.bonecp.{BoneCP, BoneCPConfig}
 import org.slf4j.LoggerFactory
 
 /**
- * sample squeryl session configuration
- */
-trait DbConnection {
-  SessionFactory.newSession.bindToCurrentThread
-  //org.squeryl.Session.currentSession.setLogger( x => println(x))
-
-}
-
-/**
  * sample squeryl configuration with an in-memory H2 database
  */
 trait DatabaseConfiguration {

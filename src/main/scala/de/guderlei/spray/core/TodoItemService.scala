@@ -1,7 +1,7 @@
 package de.guderlei.spray.core
 
 import akka.actor.Actor
-import de.guderlei.spray.database.{Todos,DbConnection}
+import de.guderlei.spray.database.Todos
 import org.squeryl.PrimitiveTypeMode._
 import de.guderlei.spray.domain.TodoItem
 import java.util.Date
@@ -37,9 +37,7 @@ case object All
 /**
  * Trait to define the Operations on TodoItems
  */
-trait TodoItemOperations extends DbConnection {
-
-
+trait TodoItemOperations {
 
   /**
    * load an TodoItem by its database id
