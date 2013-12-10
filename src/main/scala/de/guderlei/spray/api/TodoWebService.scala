@@ -43,7 +43,7 @@ class TodoWebServiceActor extends Actor with TodoWebService {
 we want to be able to test it independently, without having to spin up an actor
 the HttpService trait defines only one abstract member, which connects the services environment to the enclosing actor or test */
 trait TodoWebService extends HttpService with AsyncSupport with MyJsonMarshaller {
-  def backend = actorRefFactory.actorOf(Props[TodoItemActor].withRouter(RoundRobinRouter(nrOfInstances = 10)))
+  def backend = actorRefFactory.actorOf(Props[TodoItemActor].withRouter(RoundRobinRouter(nrOfInstances = 50)))
 
   val myRoute =
 

@@ -13,13 +13,19 @@ import org.slf4j.LoggerFactory
  * sample squeryl configuration with an in-memory H2 database
  */
 trait DatabaseConfiguration {
-  Class.forName("org.h2.Driver")
+  Class.forName("com.mysql.jdbc.Driver")
 
   val poolConfig = new BoneCPConfig()
   // see http://stackoverflow.com/questions/4162557/timeout-error-trying-to-lock-table-in-h2
   poolConfig.setJdbcUrl("jdbc:h2:mem:test")
   poolConfig.setUsername("sa")
   poolConfig.setPassword("")
+  /*poolConfig.setJdbcUrl("jdbc:mysql://localhost:3306/todoexample")
+  poolConfig.setUsername("todouser")
+  poolConfig.setPassword("password")*/
+  poolConfig.setMinConnectionsPerPartition(5);
+  poolConfig.setMaxConnectionsPerPartition(100);
+  poolConfig.setPartitionCount(1);
   val connectionPool = new BoneCP(poolConfig)
 
   val log = LoggerFactory.getLogger("Database")
