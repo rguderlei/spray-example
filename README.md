@@ -24,9 +24,17 @@ The source code is organized in the following packages:
 4. the database interaction is triggered the message object
 5. the resulting data is passed back to the webservice actor
 
+## Known Issues
+
+The performance (req/s) is not that great yet. 
+
 ## Building
 The project is built using sbt. Use 
 ```
 sbt gen-idea
 ```
 to create Idea project files.
+
+## License
+The project is released under the MIT license.
+
