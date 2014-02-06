@@ -18,15 +18,17 @@ The source code is organized in the following packages:
 - database: Squeryl schema definition, database configuration
 
 ## Basic data flow
-1. Request hits the defined routes in the webservice actor
-2. Request is converted to a message object
-3. Message object is passed to the business logic actor
-4. the database interaction is triggered the message object
+1. a Request hits the defined routes in the webservice actor
+2. the Request is converted to a message object
+3. the Message object is passed to the business logic actor
+4. the business logic actor mainly triggers the database interaction
 5. the resulting data is passed back to the webservice actor
 
-## Known Issues
+## Performance
 
-The performance (req/s) is not that great yet. 
+After some fiddling with the akka settings and the connection pool settings, the overall
+performance is quite good now. Reading access gets up to 2000 req/s on a Core2 Duo, which
+is quite nice.
 
 ## Building
 The project is built using sbt. Use 
