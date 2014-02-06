@@ -10,31 +10,28 @@ import com.jolbox.bonecp.{BoneCP, BoneCPConfig}
 import org.slf4j.LoggerFactory
 
 /**
- * sample squeryl configuration with an in-memory H2 database
+ * sample squeryl configuration with mysql database
  */
 trait DatabaseConfiguration {
   Class.forName("com.mysql.jdbc.Driver")
 
+  //configure an instantiate BoneCP connection pool
   val poolConfig = new BoneCPConfig()
-  // see http://stackoverflow.com/questions/4162557/timeout-error-trying-to-lock-table-in-h2
-  poolConfig.setJdbcUrl("jdbc:h2:mem:test")
-  poolConfig.setUsername("sa")
-  poolConfig.setPassword("")
-  /*poolConfig.setJdbcUrl("jdbc:mysql://localhost:3306/todoexample")
+  poolConfig.setJdbcUrl("jdbc:mysql://localhost:3306/todoexample")
   poolConfig.setUsername("todouser")
-  poolConfig.setPassword("password")*/
+  poolConfig.setPassword("password")
   poolConfig.setMinConnectionsPerPartition(5);
-  poolConfig.setMaxConnectionsPerPartition(100);
+  poolConfig.setMaxConnectionsPerPartition(1000);
   poolConfig.setPartitionCount(1);
   val connectionPool = new BoneCP(poolConfig)
 
+  // create a squeryl session factory
   val log = LoggerFactory.getLogger("Database")
-
-
   SessionFactory.concreteFactory = Some(
     ()=> Session.create(connectionPool.getConnection(), new H2Adapter)
   )
 
+  // initalize database schema on the fly
   initializeSchema()
   /**
    * initialize the database schema. The schema is created iff it does not
