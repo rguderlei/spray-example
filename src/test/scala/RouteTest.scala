@@ -10,7 +10,7 @@ import spray.http.StatusCodes._
 import java.util.Date
 
 
-class MyRouteTest extends Specification with Specs2RouteTest with TodoWebService with DatabaseConfiguration {
+class MyRouteTest extends Specification with Specs2RouteTest  with DatabaseConfiguration {
   def actorRefFactory = system // connect the DSL to the test ActorSystem
   // start the backend actor, the database is started using the DatabaseConfiguration mixin
   actorRefFactory.actorOf(Props[TodoItemActor], "todo-service")

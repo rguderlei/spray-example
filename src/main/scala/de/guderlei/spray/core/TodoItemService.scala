@@ -3,35 +3,11 @@ package de.guderlei.spray.core
 import akka.actor.Actor
 import de.guderlei.spray.database.Todos
 import org.squeryl.PrimitiveTypeMode._
-import de.guderlei.spray.domain.TodoItem
 import java.util.Date
 import akka.event.Logging
+import de.guderlei.spray.domain._
 
 
-/**
- * Message object for a request to load an item
- * identified by a given id
- */
-case class Get(id:Long)
-
-/**
- * Message object for a request to delete an item
- * identified by a given id
- */
-case class Delete(id: Long)
-/**
- * Message object for a request to modify an item.
- * The item to modify is passed along with the message object.
- */
-case class Update(item: TodoItem)
-/**
- * Message object for a request to create a new item.
- */
-case class Create(dueDate: Date, text: String)
-/**
- * Message object for a request to load all existing items.
- */
-case object All
 
 
 /**
@@ -46,7 +22,7 @@ trait TodoItemOperations {
    * @return an Option, None iff the TodoItem wasn't found in the database
    */
   def getById(id: Long) = transaction {
-     from(Todos.todos) (i => where(i.id === id ) select(i)).toList.headOption
+     SingleItem(from(Todos.todos) (i => where(i.id === id ) select(i)).toList.headOption)
   }
 
   /**
@@ -55,8 +31,7 @@ trait TodoItemOperations {
    */
   def all() = transaction {
     try{
-      println("fetch all")
-     from( Todos.todos ) (s => select(s)).toList
+      ItemList(from( Todos.todos ) (s => select(s)).toList)
     } catch{
       case e:Exception => {
         println(e.getMessage())
@@ -72,6 +47,7 @@ trait TodoItemOperations {
    */
   def delete(id: Long) = transaction{
      Todos.todos.deleteWhere(i => i.id === id)
+    Success("deleted successfully")
   }
 
   /**
@@ -83,6 +59,7 @@ trait TodoItemOperations {
   def create (dueDate: Date, text: String) = transaction {
     // I know, using system time as pk is a bad idea but this is an example ...
      Todos.todos.insert(new TodoItem(System.currentTimeMillis, dueDate, text))
+     Created("")
   }
 
   /**
@@ -108,7 +85,7 @@ class TodoItemActor extends Actor with TodoItemOperations{
       case Get(id) => {
         log.info(id.toString())
         val item = getById(id)
-        item match {
+        item.item match {
           case None => log.info("nothing found")
           case Some(x) => log.info(x.text)
         }
