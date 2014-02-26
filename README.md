@@ -22,8 +22,8 @@ The source code is organized in the following packages:
 2. the Request is converted to a message object
 3. An intermediate Actor is created per request to handle the completion of the request (pre request pattern)
 4. the Message object is passed to the business logic actor via the per request Actor
-4. the business logic actor mainly triggers the database interaction
-5. the resulting data is passed back to the per request actor which completes the request
+5. the business logic actor mainly triggers the database interaction
+6. the resulting data is passed back to the per request actor which completes the request
 
 ## Performance
 
