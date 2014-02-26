@@ -4,10 +4,9 @@ import akka.actor.{Props, Actor}
 import spray.routing._
 import de.guderlei.spray.core._
 import de.guderlei.spray.domain._
-import java.util.Date
 import reflect.ClassTag
-import spray.http.HttpResponse
-import akka.routing.{RoundRobinRouter, FromConfig}
+import spray.httpx.Json4sSupport
+import org.json4s.DefaultFormats
 
 // magic import
 
@@ -21,17 +20,19 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
  * Actor to provide the routes of the rest services
  */
-class TodoWebServiceActor extends Actor with HttpService with PerRequestCreator {
+class TodoWebServiceActor extends Actor with HttpService with PerRequestCreator with Json4sSupport {
 
   implicit def actorRefFactory = context
+
+  val json4sFormats = DefaultFormats
 
   // this actor only runs our route, but you could add
   // other things here, like request stream processing
   // or timeout handling
-  def receive = runRoute(myRoute)
+  def receive = runRoute(itemRoute)
 
 
-  val myRoute =
+  val itemRoute =
     path("items" / LongNumber) {
       id: Long =>
         get {
@@ -53,25 +54,25 @@ class TodoWebServiceActor extends Actor with HttpService with PerRequestCreator 
             Delete(id)
           }
         }
-    } ~  path("items") {
-          get {
+    } ~ path("items") {
+      get {
 
-            handlePerRequest {
-                All
-            }
+        handlePerRequest {
+          All
+        }
+      }
+    } ~ post {
+      entity(as[TodoItem]) {
+        item =>
+          handlePerRequest {
+            Create(item.dueDate, item.text)
           }
-      } ~ post {
-            entity(as[TodoItem]) {
-              item =>
-                handlePerRequest {
-                  Create(item.dueDate, item.text)
-                }
-            }
-          }
+      }
+    }
 
 
-    def handlePerRequest(message : RequestMessage): Route =
-        ctx => perRequest(ctx, Props(new TodoItemActor()), message)
+  def handlePerRequest(message: RequestMessage): Route =
+    ctx => perRequest(ctx, Props(new TodoItemActor()), message)
 }
 
 

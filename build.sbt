@@ -18,6 +18,7 @@ libraryDependencies ++= Seq(
   "io.spray"            %   "spray-routing"     % "1.2.0",
   "io.spray"            %   "spray-testkit"     % "1.2.0",
   "io.spray"            %%  "spray-json"        % "1.2.5",
+  "org.json4s"          %% "json4s-native"      % "3.2.4",
   "com.typesafe.akka"   %%  "akka-actor"        % "2.2.3",
   "org.specs2"          %%  "specs2"            % "2.3.4"      % "test",
   "org.squeryl"         %%  "squeryl"           % "0.9.5-6",

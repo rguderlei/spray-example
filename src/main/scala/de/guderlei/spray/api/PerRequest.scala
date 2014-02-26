@@ -9,26 +9,32 @@ import spray.routing.RequestContext
 import akka.actor.OneForOneStrategy
 import de.guderlei.spray.domain._
 import de.guderlei.spray.api.PerRequest.{WithProps, WithActorRef}
-
+import spray.httpx.Json4sSupport
+import org.json4s.DefaultFormats
 
 /**
  * Created by rguderlei on 25.02.14.
  */
-trait PerRequest extends Actor with MyJsonMarshaller{
+trait PerRequest extends Actor with Json4sSupport{
     def r: RequestContext
     def target: ActorRef
     def message: RequestMessage
 
     import context._
 
+    val json4sFormats = DefaultFormats
+
     setReceiveTimeout(2.seconds)
 
     target ! message
 
     def receive = {
-      case res: Created => complete(spray.http.StatusCodes.Created, res);
-      case res: ResultMessage => complete(OK, res)
-      case ReceiveTimeout => complete(GatewayTimeout, Error("Request timeout"))
+      case res: Created => complete(spray.http.StatusCodes.Created, res.location)
+      case res: SingleItem => complete(OK, res.item)
+      case res: ItemList => complete(OK, res.items)
+      case res: de.guderlei.spray.domain.Success => complete(OK, res.message)
+      case res: Error => complete(BadRequest, res.message)
+      case ReceiveTimeout => complete(GatewayTimeout, "Request timeout")
     }
 
     def complete[T <: AnyRef](status: StatusCode, obj: T) = {

@@ -20,15 +20,24 @@ The source code is organized in the following packages:
 ## Basic data flow
 1. a Request hits the defined routes in the webservice actor
 2. the Request is converted to a message object
-3. the Message object is passed to the business logic actor
+3. An intermediate Actor is created per request to handle the completion of the request (pre request pattern)
+4. the Message object is passed to the business logic actor via the per request Actor
 4. the business logic actor mainly triggers the database interaction
-5. the resulting data is passed back to the webservice actor
+5. the resulting data is passed back to the per request actor which completes the request
 
 ## Performance
 
-After some fiddling with the akka settings and the connection pool settings, the overall
-performance is quite good now. Reading access gets up to 2000 req/s on a Core2 Duo, which
-is quite nice.
+Performance and stability are pretty hard achieve in this setup. First I implemented the ask pattern, but the system
+crashed under heavy load. That is not tolerable in any serious system. Fiddling with akka settings doesn't help (or I couln't
+figure out how to configure everything correctly).
+
+Then I switched to the pre request pattern. That solved the performance and stability problems for me as the blocking part
+of the system is encapsulated in a separate Actor per request. The overall performance is quite good now. Reading access
+gets up to 2000 req/s on a i5, which is quite nice.
+
+## TODO
+
+Testing is broken right now.
 
 ## Building
 The project is built using sbt. Use 
