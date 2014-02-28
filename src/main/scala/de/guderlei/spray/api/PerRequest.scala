@@ -8,7 +8,7 @@ import scala.concurrent.duration._
 import spray.routing.RequestContext
 import akka.actor.OneForOneStrategy
 import de.guderlei.spray.domain._
-import de.guderlei.spray.api.PerRequest.{WithProps, WithActorRef}
+import de.guderlei.spray.api.PerRequest.WithProps
 import spray.httpx.Json4sSupport
 import org.json4s.DefaultFormats
 
@@ -29,11 +29,11 @@ trait PerRequest extends Actor with Json4sSupport{
     target ! message
 
     def receive = {
-      case res: Created => complete(spray.http.StatusCodes.Created, res.location)
-      case res: SingleItem => complete(OK, res.item)
-      case res: ItemList => complete(OK, res.items)
-      case res: de.guderlei.spray.domain.Success => complete(OK, res.message)
-      case res: Error => complete(BadRequest, res.message)
+      case de.guderlei.spray.domain.Created(location) => complete(spray.http.StatusCodes.Created, location)
+      case SingleItem(item) => complete(OK, item)
+      case ItemList(items) => complete(OK, items)
+      case de.guderlei.spray.domain.Success(message) => complete(OK, message)
+      case Error(message) => complete(BadRequest, message)
       case ReceiveTimeout => complete(GatewayTimeout, "Request timeout")
     }
 
@@ -52,8 +52,6 @@ trait PerRequest extends Actor with Json4sSupport{
 }
 
 object PerRequest {
-  case class WithActorRef(r: RequestContext, target: ActorRef, message: RequestMessage) extends PerRequest
-
   case class WithProps(r: RequestContext, props: Props, message: RequestMessage) extends PerRequest {
     lazy val target = context.actorOf(props)
   }
@@ -61,9 +59,6 @@ object PerRequest {
 
 trait PerRequestCreator {
   this: Actor =>
-
-  def perRequest(r: RequestContext, target: ActorRef, message: RequestMessage) =
-    context.actorOf(Props(new WithActorRef(r, target, message)))
 
   def perRequest(r: RequestContext, props: Props, message: RequestMessage) =
     context.actorOf(Props(new WithProps(r, props, message)))

@@ -31,7 +31,6 @@ class TodoWebServiceActor extends Actor with HttpService with PerRequestCreator 
   // or timeout handling
   def receive = runRoute(itemRoute)
 
-
   val itemRoute =
     path("items" / LongNumber) {
       id: Long =>
@@ -48,7 +47,6 @@ class TodoWebServiceActor extends Actor with HttpService with PerRequestCreator 
                 Update(new TodoItem(id, item.dueDate, item.text))
               }
           }
-
         } ~ delete {
           handlePerRequest {
             Delete(id)
@@ -72,7 +70,7 @@ class TodoWebServiceActor extends Actor with HttpService with PerRequestCreator 
 
 
   def handlePerRequest(message: RequestMessage): Route =
-    ctx => perRequest(ctx, Props(new TodoItemActor()), message)
+    ctx => perRequest(ctx, Props[TodoItemActor], message)
 }
 
 

@@ -1,7 +1,7 @@
 package de.guderlei.spray.database
 
 import org.squeryl.{Session, SessionFactory}
-import org.squeryl.adapters.H2Adapter
+import org.squeryl.adapters.{MySQLAdapter, H2Adapter}
 import de.guderlei.spray.domain.TodoItem
 import java.util.Date
 import org.squeryl.PrimitiveTypeMode._
@@ -28,7 +28,7 @@ trait DatabaseConfiguration {
   // create a squeryl session factory
   val log = LoggerFactory.getLogger("Database")
   SessionFactory.concreteFactory = Some(
-    ()=> Session.create(connectionPool.getConnection(), new H2Adapter)
+    ()=> Session.create(connectionPool.getConnection(), new MySQLAdapter)
   )
 
   // initalize database schema on the fly

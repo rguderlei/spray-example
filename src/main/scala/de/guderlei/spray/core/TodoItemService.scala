@@ -82,26 +82,10 @@ trait TodoItemOperations {
 class TodoItemActor extends Actor with TodoItemOperations{
   val log = Logging(context.system, this)
   def receive = {
-      case Get(id) => {
-        log.info(id.toString())
-        val item = getById(id)
-        item.item match {
-          case None => log.info("nothing found")
-          case Some(x) => log.info(x.text)
-        }
-
-        sender ! item
-      }
+      case Get(id) => sender ! getById(id)
       case Update(item) => sender ! update(item)
-      case Delete(id) =>{
-        log.info("delete called")
-        sender ! delete(id)
-      }
+      case Delete(id) => sender ! delete(id)
       case Create(dueDate, text) => sender ! create(dueDate, text)
-      case All => {
-        log.info("fetch all items")
-        val result = all()
-        sender ! result
-      }
+      case All => sender ! all()
   }
 }
