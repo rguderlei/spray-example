@@ -1,10 +1,10 @@
 package de.guderlei.spray.domain
 
-import java.util.Date
 import org.squeryl.PrimitiveTypeMode._
+import java.sql.Timestamp
 
 
 /**
  * simple model for Todos
  */
-case class TodoItem(id: Long, dueDate: Date, text:String);
+case class TodoItem(id: Long, dueDate: Timestamp, text:String);

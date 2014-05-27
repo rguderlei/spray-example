@@ -5,7 +5,7 @@ import spray.http.HttpHeader
 import spray.testkit.Specs2RouteTest
 import de.guderlei.spray.api._
 import spray.http.StatusCodes._
-import java.util.Date
+import java.sql.Timestamp
 
 
 class MyRouteTest extends Specification with Specs2RouteTest with TodoWebService with DatabaseConfiguration {
@@ -14,10 +14,11 @@ class MyRouteTest extends Specification with Specs2RouteTest with TodoWebService
 
 
 
+  var location: String = ""
 
   "The service" should {
     sequential // this does the trick to share state along the tests
-    var location: String = ""
+
 
     "return empty list of todoitems" in {
       Get("/items") ~> itemRoute ~> check {
@@ -28,12 +29,13 @@ class MyRouteTest extends Specification with Specs2RouteTest with TodoWebService
     }
 
     "return a 201 when trying to create a valid new one" in {
-      Post("/items", new TodoItem(-1, new Date(), "test")) ~> itemRoute ~> check {
+      Post("/items", new TodoItem(-1, new Timestamp(System.currentTimeMillis), "test")) ~> itemRoute ~> check {
 
         location = header("location") match {
           case Some(header) => header.value
           case _ => "fail"
         }
+        println("#" + location)
         status === Created
         location must not be equalTo("fail")
       }
@@ -41,14 +43,14 @@ class MyRouteTest extends Specification with Specs2RouteTest with TodoWebService
 
     "return the previously created item by its direct url" in {
       Get(location) ~> itemRoute ~> check {
-
+        val item = responseAs[TodoItem]
         status === OK
-        body.asString must contain("test")
+        item.text === "test"
       }
     }
 
     "modify the created item" in {
-      Put(location, new TodoItem(-1, new Date(), "other text")) ~> itemRoute ~> check {
+      Put(location, new TodoItem(-1,  new Timestamp(System.currentTimeMillis), "other text")) ~> itemRoute ~> check {
 
         body.asString must contain("other text")
         status === OK

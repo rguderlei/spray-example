@@ -1,6 +1,7 @@
 package de.guderlei.spray.domain
 
 import java.util.Date
+import java.sql.Timestamp
 
 /**
  * Created by rguderlei on 25.02.14.
@@ -35,7 +36,7 @@ case class Update(item: TodoItem) extends RequestMessage
 /**
  * Message object for a request to create a new item.
  */
-case class Create(dueDate: Date, text: String) extends RequestMessage
+case class Create(dueDate: Timestamp, text: String) extends RequestMessage
 /**
  * Message object for a request to load all existing items.
  */

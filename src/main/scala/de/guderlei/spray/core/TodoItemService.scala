@@ -6,8 +6,7 @@ import org.squeryl.PrimitiveTypeMode._
 import java.util.Date
 import akka.event.Logging
 import de.guderlei.spray.domain._
-
-
+import java.sql.Timestamp
 
 
 /**
@@ -56,10 +55,10 @@ trait TodoItemOperations {
    * @param text the text of the item
    * @return the newly created item
    */
-  def create (dueDate: Date, text: String) = transaction {
+  def create (dueDate: Timestamp, text: String) = transaction {
     // I know, using system time as pk is a bad idea but this is an example ...
-     Todos.todos.insert(new TodoItem(System.currentTimeMillis, dueDate, text))
-     Created("")
+     val item = Todos.todos.insert(new TodoItem(System.currentTimeMillis, dueDate, text))
+     Created("/items/"+item.id)
   }
 
   /**

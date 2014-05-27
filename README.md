@@ -35,10 +35,6 @@ Then I switched to the pre request pattern. That solved the performance and stab
 of the system is encapsulated in a separate Actor per request. The overall performance is quite good now. Reading access
 gets up to 2000 req/s on a i5, which is quite nice.
 
-## TODO
-
-Dates are not serialized correctly.
-
 ## Building
 The project is built using sbt. Use 
 ```
