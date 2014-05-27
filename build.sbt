@@ -14,13 +14,13 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "io.spray"            %   "spray-can"         % "1.2.0",
-  "io.spray"            %   "spray-routing"     % "1.2.0",
-  "io.spray"            %   "spray-testkit"     % "1.2.0",
+  "io.spray"            %   "spray-can"         % "1.3.1",
+  "io.spray"            %   "spray-routing"     % "1.3.1",
+  "io.spray"            %   "spray-testkit"     % "1.3.1",
   "io.spray"            %%  "spray-json"        % "1.2.5",
-  "org.json4s"          %% "json4s-native"      % "3.2.4",
-  "com.typesafe.akka"   %%  "akka-actor"        % "2.2.3",
-  "org.specs2"          %%  "specs2"            % "2.3.4"      % "test",
+  "org.json4s"          %% "json4s-native"      % "3.2.9",
+  "com.typesafe.akka"   %%  "akka-actor"        % "2.3.0",
+  "org.specs2"          %%  "specs2-core"            % "2.3.7"      % "test",
   "org.squeryl"         %%  "squeryl"           % "0.9.5-6",
   "com.h2database"      %   "h2"                % "1.3.174",
   "com.jolbox"          %   "bonecp"            % "0.8.0.RELEASE",

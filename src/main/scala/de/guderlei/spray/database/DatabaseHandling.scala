@@ -13,11 +13,12 @@ import org.slf4j.LoggerFactory
  * sample squeryl configuration with mysql database
  */
 trait DatabaseConfiguration {
-  Class.forName("com.mysql.jdbc.Driver")
-
+  //Class.forName("com.mysql.jdbc.Driver")
+  Class.forName("org.h2.Driver")
   //configure an instantiate BoneCP connection pool
   val poolConfig = new BoneCPConfig()
-  poolConfig.setJdbcUrl("jdbc:mysql://localhost:3306/todoexample")
+  //poolConfig.setJdbcUrl("jdbc:mysql://localhost:3306/todoexample")
+  poolConfig.setJdbcUrl("jdbc:h2:mem:test")
   poolConfig.setUsername("todouser")
   poolConfig.setPassword("password")
   poolConfig.setMinConnectionsPerPartition(5);
@@ -28,7 +29,7 @@ trait DatabaseConfiguration {
   // create a squeryl session factory
   val log = LoggerFactory.getLogger("Database")
   SessionFactory.concreteFactory = Some(
-    ()=> Session.create(connectionPool.getConnection(), new MySQLAdapter)
+    ()=> Session.create(connectionPool.getConnection(), new H2Adapter())
   )
 
   // initalize database schema on the fly

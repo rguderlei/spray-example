@@ -37,7 +37,7 @@ gets up to 2000 req/s on a i5, which is quite nice.
 
 ## TODO
 
-Testing is broken right now.
+Dates are not serialized correctly.
 
 ## Building
 The project is built using sbt. Use 
