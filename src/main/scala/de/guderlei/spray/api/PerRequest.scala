@@ -15,6 +15,8 @@ import spray.http.HttpHeaders.Location
 
 
 /**
+ * Per request pattern, taken from https://github.com/NET-A-PORTER/spray-actor-per-request
+ *
  * Created by rguderlei on 25.02.14.
  */
 trait PerRequest extends Actor with Json4sSupport{

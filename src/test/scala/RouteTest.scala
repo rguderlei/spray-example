@@ -1,7 +1,6 @@
 import de.guderlei.spray.database.DatabaseConfiguration
 import de.guderlei.spray.domain.TodoItem
 import org.specs2.mutable.Specification
-import spray.http.HttpHeader
 import spray.testkit.Specs2RouteTest
 import de.guderlei.spray.api._
 import spray.http.StatusCodes._

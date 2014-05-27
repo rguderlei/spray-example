@@ -3,7 +3,6 @@ package de.guderlei.spray.core
 import akka.actor.Actor
 import de.guderlei.spray.database.Todos
 import org.squeryl.PrimitiveTypeMode._
-import java.util.Date
 import akka.event.Logging
 import de.guderlei.spray.domain._
 import java.sql.Timestamp

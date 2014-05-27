@@ -1,6 +1,6 @@
 package de.guderlei.spray.api
 
-import akka.actor.{ActorContext, Props, Actor, ActorSystem}
+import akka.actor.{Props, Actor}
 import spray.routing._
 import de.guderlei.spray.core._
 import de.guderlei.spray.domain._

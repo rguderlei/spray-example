@@ -1,6 +1,5 @@
 package de.guderlei.spray.domain
 
-import java.util.Date
 import java.sql.Timestamp
 
 /**

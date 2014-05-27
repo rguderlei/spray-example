@@ -31,9 +31,16 @@ Performance and stability are pretty hard achieve in this setup. First I impleme
 crashed under heavy load. That is not tolerable in any serious system. Fiddling with akka settings doesn't help (or I couln't
 figure out how to configure everything correctly).
 
-Then I switched to the pre request pattern. That solved the performance and stability problems for me as the blocking part
-of the system is encapsulated in a separate Actor per request. The overall performance is quite good now. Reading access
+Then I switched to the [per request pattern](https://github.com/NET-A-PORTER/spray-actor-per-request). 
+That solved the performance and stability problems for me as the blocking part of the system is encapsulated 
+in a separate Actor per request. The overall performance is quite good now. Reading access
 gets up to 2000 req/s on a i5, which is quite nice.
+
+## Workarounds
+
+Dates in the domain model are currently java.sql.Timestamps and not java.util.Dates. The problem is that Squeryl is mapping
+java.util.Dates to SQL Dates thus loosing the time portion. Unfortunately, json4s requires the time portion to serialize/deserialize
+java.util.Dates. Alternatively, one can change the database mapping.
 
 ## Building
 The project is built using sbt. Use 
