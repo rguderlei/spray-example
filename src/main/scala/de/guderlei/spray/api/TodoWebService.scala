@@ -6,12 +6,14 @@ import de.guderlei.spray.core._
 import de.guderlei.spray.domain._
 import spray.httpx.Json4sSupport
 import org.json4s.DefaultFormats
+import org.slf4j.LoggerFactory
+import java.sql.Timestamp
 
 
 /**
  * Actor to provide the routes of the rest services
  */
-class TodoWebServiceActor extends Actor with TodoWebService {
+class CountriesWebServiceActor extends Actor with CountriesWebService {
 
   def actorRefFactory = context
 
@@ -23,29 +25,29 @@ class TodoWebServiceActor extends Actor with TodoWebService {
 
 }
 
-trait TodoWebService extends HttpService with PerRequestCreator with Json4sSupport {
+trait CountriesWebService extends HttpService with PerRequestCreator with Json4sSupport {
   implicit def executionContext = actorRefFactory.dispatcher
 
   val json4sFormats = DefaultFormats
   val itemRoute =
     pathPrefix("items") {
-      path(LongNumber) { id: Long =>
+      path(Segment) { two:String =>
           get {
             rejectEmptyResponse {
               handlePerRequest {
-                Get(id)
+                Get(two)
               }
             }
           } ~ put {
-            entity(as[TodoItem]) {
+            entity(as[CountryCode]) {
               item =>
                 handlePerRequest {
-                  Update(new TodoItem(id, item.dueDate, item.text))
+                  Update(new CountryCode(item.two, item.three, item.name))
                 }
             }
           } ~ delete {
             handlePerRequest {
-              Delete(id)
+              Delete(two)
             }
           }
       } ~ pathEnd {
@@ -54,10 +56,10 @@ trait TodoWebService extends HttpService with PerRequestCreator with Json4sSuppo
             All
           }
         } ~ post {
-          entity(as[TodoItem]) {
+          entity(as[CountryCode]) {
             item =>
               handlePerRequest {
-                Create(item.dueDate, item.text)
+                Create(item.two, item.three, item.name)
               }
           }
         }
@@ -65,7 +67,7 @@ trait TodoWebService extends HttpService with PerRequestCreator with Json4sSuppo
 
 
   def handlePerRequest(message: RequestMessage): Route =
-    ctx => perRequest(actorRefFactory, ctx, Props[TodoItemActor], message)
+    ctx => perRequest(actorRefFactory, ctx, Props[CountryCodeActor], message)
 }
 
 

@@ -1,3 +1,5 @@
+import spray.revolver.RevolverPlugin.Revolver
+
 organization  := "de.guderlei"
 
 version       := "0.3"
