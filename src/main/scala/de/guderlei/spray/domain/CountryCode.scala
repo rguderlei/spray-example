@@ -5,6 +5,6 @@ import java.sql.Timestamp
 
 
 /**
- * simple model for Todos
+ * simple model for CountryCode
  */
-case class TodoItem(id: Long, text:String);
+case class CountryCode(two:String, three:String, name:String);
