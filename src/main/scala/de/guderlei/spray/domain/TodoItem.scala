@@ -7,4 +7,4 @@ import java.sql.Timestamp
 /**
  * simple model for Todos
  */
-case class TodoItem(id: Long, dueDate: Timestamp, text:String);
+case class TodoItem(id: Long, text:String);

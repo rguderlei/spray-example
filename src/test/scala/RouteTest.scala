@@ -28,7 +28,7 @@ class MyRouteTest extends Specification with Specs2RouteTest with TodoWebService
     }
 
     "return a 201 when trying to create a valid new one" in {
-      Post("/items", new TodoItem(-1, new Timestamp(System.currentTimeMillis), "test")) ~> itemRoute ~> check {
+      Post("/items", new TodoItem(-1, "test")) ~> itemRoute ~> check {
 
         location = header("location") match {
           case Some(header) => header.value
@@ -49,7 +49,7 @@ class MyRouteTest extends Specification with Specs2RouteTest with TodoWebService
     }
 
     "modify the created item" in {
-      Put(location, new TodoItem(-1,  new Timestamp(System.currentTimeMillis), "other text")) ~> itemRoute ~> check {
+      Put(location, new TodoItem(-1, "other text")) ~> itemRoute ~> check {
 
         body.asString must contain("other text")
         status === OK

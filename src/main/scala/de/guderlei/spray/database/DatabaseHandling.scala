@@ -17,10 +17,10 @@ trait DatabaseConfiguration {
   Class.forName("org.h2.Driver")
   //configure an instantiate BoneCP connection pool
   val poolConfig = new BoneCPConfig()
-  //poolConfig.setJdbcUrl("jdbc:mysql://localhost:3306/todoexample")
-  poolConfig.setJdbcUrl("jdbc:h2:mem:test")
-  poolConfig.setUsername("todouser")
-  poolConfig.setPassword("password")
+  poolConfig.setJdbcUrl("jdbc:mysql://localhost:3306/todoexample")
+  //poolConfig.setJdbcUrl("jdbc:h2:mem:test")
+  poolConfig.setUsername("root")
+  poolConfig.setPassword("")
   poolConfig.setMinConnectionsPerPartition(5);
   poolConfig.setMaxConnectionsPerPartition(1000);
   poolConfig.setPartitionCount(1);

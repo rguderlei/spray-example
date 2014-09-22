@@ -6,6 +6,8 @@ import de.guderlei.spray.core._
 import de.guderlei.spray.domain._
 import spray.httpx.Json4sSupport
 import org.json4s.DefaultFormats
+import org.slf4j.LoggerFactory
+import java.sql.Timestamp
 
 
 /**
@@ -40,7 +42,7 @@ trait TodoWebService extends HttpService with PerRequestCreator with Json4sSuppo
             entity(as[TodoItem]) {
               item =>
                 handlePerRequest {
-                  Update(new TodoItem(id, item.dueDate, item.text))
+                  Update(new TodoItem(id, item.text))
                 }
             }
           } ~ delete {
@@ -57,7 +59,7 @@ trait TodoWebService extends HttpService with PerRequestCreator with Json4sSuppo
           entity(as[TodoItem]) {
             item =>
               handlePerRequest {
-                Create(item.dueDate, item.text)
+                Create(item.text)
               }
           }
         }

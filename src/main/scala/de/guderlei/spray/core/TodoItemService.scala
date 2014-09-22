@@ -6,6 +6,7 @@ import org.squeryl.PrimitiveTypeMode._
 import akka.event.Logging
 import de.guderlei.spray.domain._
 import java.sql.Timestamp
+import org.slf4j.LoggerFactory
 
 
 /**
@@ -20,7 +21,8 @@ trait TodoItemOperations {
    * @return an Option, None iff the TodoItem wasn't found in the database
    */
   def getById(id: Long) = transaction {
-     SingleItem(from(Todos.todos) (i => where(i.id === id ) select(i)).toList.headOption)
+    LoggerFactory.getLogger("Database").info(""+Todos.todos.toList.length)
+     SingleItem(from(Todos.todos) (i => where(i.id === id) select(i)).toList.headOption)
   }
 
   /**
@@ -29,6 +31,7 @@ trait TodoItemOperations {
    */
   def all() = transaction {
     try{
+      LoggerFactory.getLogger("Database").info("all")
       ItemList(from( Todos.todos ) (s => select(s)).toList)
     } catch{
       case e:Exception => {
@@ -50,13 +53,12 @@ trait TodoItemOperations {
 
   /**
    * create a new TodoItem
-   * @param dueDate the dueDate of the new item
    * @param text the text of the item
    * @return the newly created item
    */
-  def create (dueDate: Timestamp, text: String) = transaction {
+  def create ( text: String) = transaction {
     // I know, using system time as pk is a bad idea but this is an example ...
-     val item = Todos.todos.insert(new TodoItem(System.currentTimeMillis, dueDate, text))
+     val item = Todos.todos.insert(new TodoItem(System.currentTimeMillis, text))
      Created("/items/"+item.id)
   }
 
@@ -68,7 +70,7 @@ trait TodoItemOperations {
    */
   def update (item: TodoItem) = {
     transaction {
-      Todos.todos.update(i => where(i.id===item.id) set(i.dueDate := item.dueDate, i.text := item.text ))
+      Todos.todos.update(i => where(i.id===item.id) set(i.text := item.text ))
     }
     getById(item.id)
   }
@@ -83,7 +85,7 @@ class TodoItemActor extends Actor with TodoItemOperations{
       case Get(id) => sender ! getById(id)
       case Update(item) => sender ! update(item)
       case Delete(id) => sender ! delete(id)
-      case Create(dueDate, text) => sender ! create(dueDate, text)
+      case Create(text) => sender ! create(text)
       case All => sender ! all()
   }
 }

@@ -35,7 +35,7 @@ case class Update(item: TodoItem) extends RequestMessage
 /**
  * Message object for a request to create a new item.
  */
-case class Create(dueDate: Timestamp, text: String) extends RequestMessage
+case class Create(text: String) extends RequestMessage
 /**
  * Message object for a request to load all existing items.
  */
